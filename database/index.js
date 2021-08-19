@@ -1,9 +1,9 @@
 //Array of objects
-const books =[
+let books =[
     {
         ISBN : "12345ONE",
         title: "Getting started with MERN",
-        authors: [1],
+        authors: [1,2],
         language : "en",
         pubDate: "2021-07-07",
         numOfPage: 225,
@@ -13,33 +13,39 @@ const books =[
     {
         ISBN : "12345",
         title: "Getting started with python",
-        authors: [2],
+        authors: [1,2],
         language : "en",
         pubDate: "2021-07-07",
         numOfPage: 225,
         category: ["fiction","tech","web dev"],
+        publication:1
     },
 ]
 const authors=[
     {
-        id:"1",
+        id:1,
         name: "Somya",
-        books:["12345ONE"],
+        books:["12345ONE","12345"],
 
     },
     {
-        id:"2",
+        id:2,
         name: "Priyesh",
-        books: ["12345ONE","12345"],
+        books: ["12345ONE"],
     },
 ];
 
-const publications = [
+let publications = [
     {
-        id:"1",
+        id:1,
         name:"Chakra",
         books:["12345ONE"],
     },
+    {
+        id:2,
+        name:"Somya Webdev",
+        books:[""]
+    }
 ];
 
 //To export the data in nodejs

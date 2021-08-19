@@ -48,7 +48,7 @@
 //update Author name using id ___Task
 
 //DELETE
-//Delete an author
+//Delete an author ____Task
 
 // --------------------------------------------------------------------------------------------------------------------------
 //Publications
@@ -69,5 +69,5 @@
 
 //DELETE
 //Delete a book from publication
-//Delete a publication 
+//Delete a publication ____TaskDone
 

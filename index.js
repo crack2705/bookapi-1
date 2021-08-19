@@ -1,6 +1,7 @@
 //See tasks with array format of intergers. for authors in book constant and id in authors constant in database.
 
 //Frame work
+const { json } = require("express");
 const express = require("express");
 
 //Database
@@ -166,7 +167,7 @@ Access      //Public
 Parameters  //NONE
 Method      //GET
  */
-SMS.get("/publications",(req,res)=>
+SMS.get("/publication",(req,res)=>
 {
     //hello changes
     return res.json({publications: database.publications});
@@ -333,6 +334,149 @@ SMS.put("/book/author/update/:isbn",(req,res)=>
     
 // }
 
+/*
+Route       /publication/update/book
+Description update/add a new book to publication
+Access      //Public
+Parameters  isbn
+Method      //PUT
+ */
+SMS.put("/publication/update/book/:isbn",(req,res)=>
+{
+    //update the publication database
+    database.publications.forEach((publication)=>{
+        if(publication.id===req.body.pubID){
+            return publication.books.push(req.params.isbn);
+        }
+    });
+    database.books.forEach((book)=>
+    {
+        if(book.ISBN===req.params.isbn){
+            book.publication = req.body.pubID;
+            return;
+        }
+    });
+    return res.json({books:database.books,
+    publiactions:database.publications,
+    message:"Successfully updated publication",
+});
+});
 
-SMS.listen(5500, ()=> console.log("Server running"));
+/*
+Route       /book/delete
+Description delete a book
+Access      //Public
+Parameters  isbn
+Method      //DELETE
+ */
+SMS.delete("/book/delete/:isbn",(req,res)=>{
+//If we use map, we have to replace the whole array object, whole  i.e. book object completely -> we will use this
+//But if we use forEach, we can directly edit at single point and modify master database
+const updatedBookDatabase = database.books.filter((book)=>book.ISBN !== req.params.isbn);
+//Whether isbn is equal to isbn parameter given in the url. If not equal then put put it in updatedBookDatabase. If eqaul dont do anything.We just replaced the object with the parameter which did not match, so automatically other one got deleted.
+database.books=updatedBookDatabase;
+return res.json({books:database.books});
+
+});
+
+// *
+// Route       /book/delete/author
+// Description delete an author from a book 
+// Access      //Public
+// Parameters  isbn
+// Method      //DELETE
+//  */
+
+SMS.delete("/book/delete/author/:isbn/:authorID",(req,res)=>
+{ //Update book database
+    database.books.forEach((book)=>
+    {
+        if(book.ISBN === req.params.isbn)
+        {
+            const newAuthorList=book.authors.filter((author)=> author !== parseInt(req.params.authorID));
+            book.authors =newAuthorList;
+            return;
+        }
+    
+});
+//Update the author database
+database.authors.forEach((author)=>{
+    if(author.id === parseInt(req.params.authorID)){
+    const newBooksList = author.books.filter((book)=>book !== req.params.isbn);
+
+        author.books=newBooksList;
+        return;
+    }
+});
+return res.json({
+message:"author was deleted",    
+book: database.books,
+author:database.authors,
+
+});
+});
+
+
+
+//Recheck the above query, its half done
+// *
+// Route       /publication/delete
+// Description delete a publication
+// Access      //Public
+// Parameters  id
+// Method      //DELETE
+//  */
+SMS.delete("/publication/delete/:id",(req,res)=>{
+    //If we use map, we have to replace the whole array object, whole  i.e. book object completely -> we will use this
+    //But if we use forEach, we can directly edit at single point and modify master database
+    const updatedPublicationDatabase = database.publications.filter((publication)=>publication.id !== parseInt(req.params.id));
+    //Whether isbn is equal to isbn parameter given in the url. If not equal then put put it in updatedBookDatabase. If eqaul dont do anything.We just replaced the object with the parameter which did not match, so automatically other one got deleted.
+    database.publications=updatedPublicationDatabase;
+    return res.json({
+        publications:database.publications,
+    message:"Successfully deleted publication",});
+    
+    });
+
+  
+/*
+Route       /publication/delete/book
+Description delete a book from publication
+Access      //Public
+Parameters  isbn,pub ID
+Method      //DELETE
+ */
+
+SMS.delete("/publication/delete/book/:isbn/:pubID",(req,res)=>
+{
+    //Update publication databse
+    database.publications.forEach((publication) => {
+      
+        if(publication.id === parseInt(req.params.pubID)){
+            const newBooksList = publication.books.filter(
+                (book)=>book!==req.params.isbn
+            );
+            publication.books= newBooksList;
+            return;
+        }
+    });
+
+    //Update book database
+    database.books.forEach((book) => {
+      
+        if(book.isbn == parseInt(req.params.isbn)){
+            book.publication=0;
+            return;
+        }
+    });
+
+    return res.json({
+    book: database.books,
+    publications:database.publications,
+    message:"Successfully deleted a book from publication",});
+});
+
+
+SMS.listen(5500, ()=> console.log("Server running!!!!!"));
+
 
